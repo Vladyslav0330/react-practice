@@ -13,16 +13,18 @@ const categ = [
 function App() {
   const [categoryId, setCategoryId] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   const [searchValue, setSearchValue] = useState("");
   const [collections, setCollections] = useState([]);
 
   useEffect(() => {
     setIsLoading(true);
+
+    const category = categoryId ? `category=${categoryId}` : "";
+
     fetch(
-      `https://64d7bf9b5f9bf5b879cdee4f.mockapi.io/colection?${
-        categoryId ? `category=${categoryId}` : ""
-      }`
+      `https://64d7bf9b5f9bf5b879cdee4f.mockapi.io/colection?page=${page}&limit=3&${category}`
     )
       .then((res) => res.json())
       .then((json) => {
@@ -33,7 +35,7 @@ function App() {
         alert("Error while getting data");
       })
       .finally(() => setIsLoading(false));
-  }, [categoryId]);
+  }, [categoryId, page]);
 
   return (
     <div className="App">
@@ -71,9 +73,14 @@ function App() {
         )}
       </div>
       <ul className="pagination">
-        <li>1</li>
-        <li className="active">2</li>
-        <li>3</li>
+        {[...Array(5)].map((_, i) => (
+          <li
+            onClick={() => setPage(i + 1)}
+            className={page === i + 1 ? "active" : ""}
+          >
+            {i + 1}
+          </li>
+        ))}
       </ul>
     </div>
   );
